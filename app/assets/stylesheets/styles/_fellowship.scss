@@ -79,14 +79,9 @@
 }
 
   .speaking{
-    font-family: sans-serif;
     margin: 20px auto;
-    text-align: center;
-    font-size: 40px;
     max-width: 1500px;
     position: relative;
-    color: #8C1D40;
-    font-weight: bold;
   }
 
   .speaking:before {
@@ -148,16 +143,19 @@
     font-weight: 400;
 
   }
-  .team .container{
-    min-width:auto;
-    max-width: 1300px;
-    height: auto;
-    padding: 10px;
 
-    background: rgba(255,255,255,.2);
-    box-shadow: 0 5px 15px rgba(0,0,0,.5);
-    margin: auto auto;
-    margin-top: 2em;
-    margin-bottom: 2em;
-    border-radius: 10px;
+.box{
+    position: relative;
+}
+
+.bottom-left {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+}
+
+.img-squares {
+height: 331.917px;
+min-width: auto;
+width:100%;
 }
