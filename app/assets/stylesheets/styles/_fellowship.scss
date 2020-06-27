@@ -1,25 +1,3 @@
-
-
-.paragraph1 {
-  
-  font-size: 18px; 
-  padding-top: 2px; 
-  line-height: 1.7em;
-}
-
-.paragraph2 {
-  
-  font-size:19px;  
-  line-height: 1.7em;
-  padding-top: 2px;
-
-}
-
-.button1{
-  background-color: #8C1D40; 
-  border-radius: 4px; 
-  padding-top: 4px
-}
 .cardHolder {
   width: 100%;
   max-width: 400px;
@@ -120,14 +98,6 @@
     background: #ecd7c6;
   }
 
-  .box p {
-    font-family: "essonnes-headline", 'Georgia', serif;
-    padding-top: 80px;
-    font-size: 36px;
-    font-weight: bold;
-    color: white;
-    text-align: left;
-  }
 
 .rotate, .rotate1, .rotate2{
    transform:rotate(180deg);
@@ -144,8 +114,10 @@
 
   }
 
+
 .box{
     position: relative;
+    color: white;
 }
 
 .bottom-left {
