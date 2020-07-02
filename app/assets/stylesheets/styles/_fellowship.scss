@@ -115,6 +115,22 @@
   }
 
 
+.background-team{
+  background-image: url("team.jpg");
+}
+
+.background-audience{
+  background-image: url("audience.jpg");
+}
+
+.background-web{
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 500px;
+  background-position: center center;
+}
+
+
 .box{
     position: relative;
     color: white;
