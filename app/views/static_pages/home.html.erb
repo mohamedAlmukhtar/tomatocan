@@ -1,9 +1,13 @@
+<% if user_signed_in? %>
+  <% current_user.update_column(:last_viewed, 0) %>
+<% end %>
+
 <div class="alert">
-          <% flash.each do |key, value| %>
-            <div class="<%= flash_class(key) %>">
-              <%= value %>
-            </div>
-          <% end %>
+  <% flash.each do |key, value| %>
+    <div class="<%= flash_class(key) %>">
+      <%= value %>
+    </div>
+  <% end %>
 </div>
   <div class="col-lg-5 col-md-11">
       <div id="home">
@@ -49,38 +53,37 @@
         <% end %>
       </div>
     </div>
-    <hr>
 
-  <div class="col-lg-7 col-md-12" id="countdown_clock">
-    <div class="main">
-      <br>
-      <div class="col-lg-3 col-md-6" >
-        <h2>Conversation Schedule</h2>
-        <h4>Come talk about topics important to you in the 2020 US election!</h4>
-          <% if user_signed_in? %>
-            <%= link_to 'Post your Own Conversation', new_event_path, class: "btn btn-warning", title: "Host drop-in conversation sessions or invite people to ask questions about your area of expertise" %>
-          <% end %>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <%= render 'layouts/countdown_clock' %>
-      </div>
+<div class="col-lg-7 col-md-12" id="countdown_clock">
+  <div class="main">
+    <br>
+    <div class="col-lg-3 col-md-6">
+      <h2>Conversation Schedule</h2>
+      <h4>Come talk about topics important to you in the 2020 US election!</h4>
+      <% if user_signed_in? %>
+        <%= link_to 'Post your Own Conversation', new_event_path, class: "btn btn-warning", title: "Host drop-in conversation sessions or invite people to ask questions about your area of expertise" %>
+      <% end %>
     </div>
-    <div class="tabContainer">
-        <div class="buttonContainer">
-          <button class="btn btn-primary" onclick="showPanel(0,'#f44336')">List View </button>
-          <button class="btn btn-primary"  onclick="showPanel(1,'#4caf50')">Monthly View </button>
-          <!-- <button onclick="showPanel(2,'#2196f3')">Weekly View</button> -->
-        </div>
-      <div class="tabPanel">
-        <%= render 'layouts/convocalendar', collection: @conversations %> 
-      </div>
-      <div class="tabPanel">
-        <%= render 'layouts/monthconvocalendar', collection: @conversationsall %>
-      </div> 
+    <div class="col-lg-3 col-md-6">
+      <%= render 'layouts/countdown_clock' %>
     </div>
   </div>
+  <div class="tabContainer">
+    <div class="buttonContainer">
+      <button onclick="showPanel(0,'#f44336')">List View </button>
+      <button onclick="showPanel(1,'#4caf50')">Monthly View </button>
+      <!-- <button onclick="showPanel(2,'#2196f3')">Weekly View</button> -->
+    </div>
+    <div class="tabPanel">
+      <%= render 'layouts/convocalendar', collection: @conversations %>
+    </div>
+    <div class="tabPanel">
+      <%= render 'layouts/monthconvocalendar', collection: @conversationsall %>
+    </div>
+  </div>
+</div>
 
 <br><br><br>
-    <script type="text/javascript">
-      showPanel(0,'#f44336');
-    </script>
+<script type="text/javascript">
+  showPanel(0, '#f44336');
+</script>
