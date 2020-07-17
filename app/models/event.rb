@@ -58,11 +58,10 @@ class Event < ApplicationRecord
     schedule
   end
 
-  def calendar_events(start)
+  def calendar_events(start, end_date)
     if recurring.empty?
       [self]
     else
-      end_date = start.end_of_month.end_of_week
       schedule(start_at).occurrences(end_date).map do |date|
         Event.new(id: id, name: name, start_at: date, usrid: user_id, desc: desc, end_at: end_at, topic: topic)
       end

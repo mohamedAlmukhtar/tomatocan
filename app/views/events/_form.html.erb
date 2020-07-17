@@ -23,7 +23,13 @@
   <div class="form-group">
     <h3><%= f.label :buttontype, "Repeated" %></h3>
     <p class="help-block"></p>
-    <%= f.select_recurring :recurring, nil, allow_blank: true %>
+    <%= f.select_recurring :recurring, nil, allow_blank: true%>
+  </div>
+
+  <div class="form-group d-none" id="end-date">
+    <h3><%= f.label :buttontype, "End date for ocurrences" %></h3>
+    <p class="help-block"></p>
+    <%= f.date_select :end_date, default: 3.days.from_now, start_year: Date.today.year, end_year: Date.today.year + 1 %>
   </div>
 
   <div class="form-group">
@@ -62,6 +68,17 @@
   } else {
       offset = "+" + ("0" + offset).slice(-2) + ":00"
   }
+
+  $('#event_recurring').change(function(){
+    var item = $(this).val();
+    if(item === "null"){
+      $('#end-date').fadeOut(); 
+    }
+    else{
+      $('#end-date').fadeIn();
+    }
+    
+});
   
   document.getElementById("timeZone").value = offset
   document.getElementById("hb1").innerHTML = getTimezoneName()
