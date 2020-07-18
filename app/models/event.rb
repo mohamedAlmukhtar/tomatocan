@@ -38,8 +38,6 @@ class Event < ApplicationRecord
   end
 =end
 
-
-
   def recurring=(value)
     if value != "null"
       super(RecurringSelect.dirty_hash_to_rule(value).to_hash)
@@ -58,11 +56,17 @@ class Event < ApplicationRecord
     schedule
   end
 
-  def calendar_events(start, end_date)
+  def calendar_events()
     if recurring.empty?
       [self]
     else
-      schedule(start_at).occurrences(end_date).map do |date|
+      if recurring_period.nil?
+        end_date = start_at
+      else
+        end_date = start_at + recurring_period.days
+      end
+      start_date = start_at
+      schedule(start_date).occurrences(end_date).map do |date|
         Event.new(id: id, name: name, start_at: date, usrid: user_id, desc: desc, end_at: end_at, topic: topic)
       end
     end

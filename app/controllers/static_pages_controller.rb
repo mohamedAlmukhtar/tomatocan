@@ -13,7 +13,7 @@ class StaticPagesController < ApplicationController
     @eventsAll = Event.where( "start_at > ? AND (topic = ? OR topic = ?)", showrecentconvo, 'Study Hall', 'Group Problem Solving' )
 
     @events = Event.where( "start_at > ?", showrecentconvo ).order('start_at ASC')
-    @calendar_events = @conversations.flat_map{ |e| e.calendar_events(e.start_at, e.end_date)}
+    @calendar_events = @conversations.flat_map{ |e| e.calendar_events()}
     @calendar_events = @calendar_events.sort_by {|event| event.start_at}
     @calendar_events_all = @calendar_events
     @calendar_events = @calendar_events.paginate(page: params[:page], :per_page => 9)

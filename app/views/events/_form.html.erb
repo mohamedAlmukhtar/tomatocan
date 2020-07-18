@@ -20,16 +20,80 @@
     <%= f.datetime_select :start_at, ampm: true, default: 3.days.from_now, minute_step: 60, start_year: Date.today.year, end_year: Date.today.year + 1 %>
   </div>
 
-  <div class="form-group">
-    <h3><%= f.label :buttontype, "Repeated" %></h3>
-    <p class="help-block"></p>
-    <%= f.select_recurring :recurring, nil, allow_blank: true%>
-  </div>
+  <input type="hidden" id="recurring" name="recurring" value='null'>
+  <input type="hidden" id="recurring_period" name="recurring_period" value='1'>
+  <!-- {"interval":1,"until":null,"count":null,"validations":null,"rule_type":"IceCube::DailyRule"} 
 
-  <div class="form-group d-none" id="end-date">
-    <h3><%= f.label :buttontype, "End date for ocurrences" %></h3>
-    <p class="help-block"></p>
-    <%= f.date_select :end_date, default: 3.days.from_now, start_year: Date.today.year, end_year: Date.today.year + 1 %>
+  {"interval":1,"until":null,"count":null,"validations":{"day":[0,1,2,3,4,5,6]},"rule_type":"IceCube::WeeklyRule","week_start":0}
+  -->
+
+  <h3><%= f.label :buttontype, "Recurring" %></h3>
+    <!-- Recurring event button -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recurringModal">
+    Set recurring event
+  </button>
+
+  <!-- Recurring Modal -->
+  <div class="modal fade" id="recurringModal" tabindex="-1" role="dialog" aria-labelledby="recurringModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+      <div class="modal-content">
+        <!-- Header -->
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h3 class="modal-title" id="recurringModalLongTitle"><strong>Recurring</strong></h3>
+        </div>
+        <!-- Body -->
+        <div class="modal-body">
+            <div class="form-row align-items-center">
+              <h4>Select method of recurrance: </h4>
+              <select  class="form-control" autocomplete="off" id="recurring-method" name="recurring-method">
+                <option value="Daily">Daily</option> 
+                <option value="Weekly">Weekly</option>
+              </select>
+              <div id="recurring-daily-actions">
+                <h4>Repeat this event:</h4>
+                <h4><strong>For the next <input type="number" id="recurring-daily-period" name="recurring-period" value="1" size="2"> Day(s)</strong></h4>
+              </div>
+              <div id="recurring-weekly-actions" class="d-none">
+                <h4>Repeat this event every:</h4>
+                <div class="btn-group-toggle" data-toggle="buttons">
+                  <% (0..6).each do |i| %>
+                       <label class="btn week-days" style="width:30px;height:30px;border:solid 1px grey;">
+                          <input type="checkbox" value="<%= i %>" name="week-days" autocomplete="off"> 
+                          <% case i %>
+                            <% when 0 %>
+                              <%= 'S' %>
+                            <% when 1 %>
+                              <%= 'M' %>
+                            <% when 2 %>
+                              <%= 'T' %>
+                            <% when 3 %>
+                              <%= 'W' %>
+                            <% when 4 %>
+                              <%= 'T' %>
+                            <% when 5 %>
+                              <%= 'F' %>
+                            <% when 6 %>
+                              <%= 'S' %>
+                          <% end %>
+                      </label>
+                  <% end %>
+                 
+                  
+                </div>
+                <h4><strong>For the next <input type="number" id="recurring-weekly-period" name="recurring-period" value="1" size="2"> Week(s)</strong></h4>
+              </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="recurring-save">Save</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="form-group">
@@ -69,16 +133,75 @@
       offset = "+" + ("0" + offset).slice(-2) + ":00"
   }
 
-  $('#event_recurring').change(function(){
+  
+
+  $('#recurring-method').change(function(){
     var item = $(this).val();
-    if(item === "null"){
-      $('#end-date').fadeOut(); 
+    if(item === "Daily"){
+      $('#recurring-weekly-actions').hide();
+      $('#recurring-daily-actions').show();
+    }
+    else if(item === "Weekly"){
+      $('#recurring-daily-actions').hide();
+      $('#recurring-weekly-actions').show();
+    }
+  });
+
+  $('.week-days').click(function(){
+    if($(this).hasClass('active')){
+      $(this).removeClass('btn-primary');
     }
     else{
-      $('#end-date').fadeIn();
+      $(this).addClass('btn-primary');
     }
     
-});
+  });
+
+  $('#recurring-save').click(function(){
+    var method = $('#recurring-method').val();
+    if(method === "Daily"){
+      var period = $('#recurring-daily-period').val();
+    }
+    else if(method === "Weekly"){
+      var period = $('#recurring-weekly-period').val() * 7;
+    }
+    $('#recurring_period').val(period);
+    var weekDays = [];
+    $.each($("input[name='week-days']:checked"), function(){
+
+        weekDays.push($(this).val());
+
+    });
+    console.log(weekDays);
+    $('#recurringModal').modal('toggle');
+    var value = createHash(method, weekDays);
+    $('#recurring').val(value);
+  });
+
+
+  function createHash(method, weekDays){
+    var value = '{"interval":1,"until":null,"count":null,"validations":';
+    if(method === "Daily"){
+      value += 'null,"rule_type":"IceCube::DailyRule"}';
+    }
+    else if(method === "Weekly"){
+      if(weekDays.length === 0){
+        value += 'null,"rule_type":"IceCube::WeeklyRule","week_start":0}';
+      }
+      if(weekDays.length > 0){
+        var i;
+        value += '{"day":[';
+        for(i=0;i<weekDays.length;i++){
+          value += `${weekDays[i]}`;
+          if(i<weekDays.length - 1){
+            value += ',';
+          }
+        }
+        value += ']},"rule_type":"IceCube::WeeklyRule","week_start":0}';
+      }
+    }
+    return value;
+  }
   
   document.getElementById("timeZone").value = offset
   document.getElementById("hb1").innerHTML = getTimezoneName()
