@@ -60,13 +60,12 @@ class Event < ApplicationRecord
     if recurring.empty?
       [self]
     else
-      if recurring_period.nil?
+      if recurring_end.nil?
         end_date = start_at
       else
-        end_date = start_at + recurring_period.days
+        end_date = recurring_end + 1.days
       end
-      start_date = start_at
-      schedule(start_date).occurrences(end_date).map do |date|
+      schedule(start_at).occurrences(end_date).map do |date|
         Event.new(id: id, name: name, start_at: date, usrid: user_id, desc: desc, end_at: end_at, topic: topic)
       end
     end

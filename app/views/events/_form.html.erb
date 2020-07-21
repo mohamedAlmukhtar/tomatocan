@@ -17,11 +17,10 @@
   <div class="form-group">
     <h3><%= f.label :buttontype, "Start Time" %></h3>
     <p class="help-block" id="hb1"></p>
-    <%= f.datetime_select :start_at, ampm: true, default: 3.days.from_now, minute_step: 60, start_year: Date.today.year, end_year: Date.today.year + 1 %>
+    <%= f.datetime_select :start_at, ampm: true, default: 3.days.from_now, minute_step: 60, start_year: Date.today.year, end_year: Date.today.year + 1, :id => 'start-date' %>
   </div>
 
   <input type="hidden" id="recurring" name="recurring" value='null'>
-  <input type="hidden" id="recurring_period" name="recurring_period" value='1'>
   <!-- {"interval":1,"until":null,"count":null,"validations":null,"rule_type":"IceCube::DailyRule"} 
 
   {"interval":1,"until":null,"count":null,"validations":{"day":[0,1,2,3,4,5,6]},"rule_type":"IceCube::WeeklyRule","week_start":0}
@@ -29,7 +28,7 @@
 
   <h3><%= f.label :buttontype, "Recurring" %></h3>
     <!-- Recurring event button -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recurringModal">
+  <button type="button" id="recurring-set" class="btn btn-primary" data-toggle="modal" data-target="#recurringModal">
     Set recurring event
   </button>
 
@@ -53,15 +52,14 @@
                 <option value="Weekly">Weekly</option>
               </select>
               <div id="recurring-daily-actions">
-                <h4>Repeat this event:</h4>
-                <h4><strong>For the next <input type="number" id="recurring-daily-period" name="recurring-period" value="1" size="2"> Day(s)</strong></h4>
+                <h4>Repeat this event every day:</h4>
               </div>
               <div id="recurring-weekly-actions" class="d-none">
                 <h4>Repeat this event every:</h4>
                 <div class="btn-group-toggle" data-toggle="buttons">
                   <% (0..6).each do |i| %>
                        <label class="btn week-days" style="width:30px;height:30px;border:solid 1px grey;">
-                          <input type="checkbox" value="<%= i %>" name="week-days" autocomplete="off"> 
+                          <input type="checkbox" id="week-days-check-<%= i %>" value="<%= i %>" name="week-days" autocomplete="off"> 
                           <% case i %>
                             <% when 0 %>
                               <%= 'S' %>
@@ -83,8 +81,11 @@
                  
                   
                 </div>
-                <h4><strong>For the next <input type="number" id="recurring-weekly-period" name="recurring-period" value="1" size="2"> Week(s)</strong></h4>
               </div>
+              <div>
+                <h4>Until</h4>
+                <%= f.date_select :recurring_end, start_year: Date.today.year, end_year: Date.today.year, :id => 'recurring_end' %>
+                </div>
             </div>
         </div>
         <!-- Footer -->
@@ -157,15 +158,20 @@
     
   });
 
+
+  $('#recurring-set').click(function(){
+      var weekDay = getWeekDay();
+      var id = '#week-days-check-' + weekDay;
+      if($(id).val() == weekDay){
+        if(!$(id).parent().hasClass('active')){
+          $(id).click();
+        }
+      }
+      
+  });
+
   $('#recurring-save').click(function(){
     var method = $('#recurring-method').val();
-    if(method === "Daily"){
-      var period = $('#recurring-daily-period').val();
-    }
-    else if(method === "Weekly"){
-      var period = $('#recurring-weekly-period').val() * 7;
-    }
-    $('#recurring_period').val(period);
     var weekDays = [];
     $.each($("input[name='week-days']:checked"), function(){
 
@@ -173,11 +179,19 @@
 
     });
     console.log(weekDays);
+    $('#recurring-set').html(method);
     $('#recurringModal').modal('toggle');
     var value = createHash(method, weekDays);
     $('#recurring').val(value);
   });
 
+  function getWeekDay(){
+    var year = $('#event_start_at_1i').val();
+    var month = $('#event_start_at_2i').val();
+    var day = $('#event_start_at_3i').val();
+    var date = new Date(year,month - 1,day);
+    return date.getDay();
+  }
 
   function createHash(method, weekDays){
     var value = '{"interval":1,"until":null,"count":null,"validations":';

@@ -44,7 +44,6 @@ class EventsController < ApplicationController
     convert_time # call convert time method
     @event = current_user.events.build(event_params)
     @event.recurring = params[:recurring]
-    @event.recurring_period = params[:recurring_period]
 
     respond_to do |format|
       if @event.save
@@ -120,7 +119,7 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:topic, :name, :start_at, :end_at, :desc, :usrid, :user_id, :recurring, :recurring_period)
+    params.require(:event).permit(:topic, :name, :start_at, :end_at, :desc, :usrid, :user_id, :recurring, :recurring_end)
   end
     
 end
