@@ -44,7 +44,7 @@ class EventsController < ApplicationController
     convert_time # call convert time method
     @event = current_user.events.build(event_params)
     @event.recurring = params[:recurring]
-
+    @event.unique_recurring_events()
     respond_to do |format|
       if @event.save
         @event.update_attribute(:user_id, params[:event][:usrid])

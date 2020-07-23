@@ -84,7 +84,7 @@
               </div>
               <div>
                 <h4>Until</h4>
-                <%= f.date_select :recurring_end, start_year: Date.today.year, end_year: Date.today.year, :id => 'recurring_end' %>
+                <%= f.date_select :recurring_end, default: 3.days.from_now, start_year: Date.today.year, end_year: Date.today.year, :id => 'recurring_end' %>
                 </div>
             </div>
         </div>

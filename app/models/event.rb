@@ -4,7 +4,7 @@ class Event < ApplicationRecord
 
   has_many :rsvpqs
   has_many :users, through: :rsvpqs
-  validates :start_at, uniqueness: { scope: :topic, message: "Can't have simultaneous Conversations/Study Halls" }
+  validates :start_at, uniqueness: { scope: :topic, message: ":: Can't have simultaneous Conversations/Study Halls" }
   validates :usrid, presence: true
   validates :name, presence: true
   validates :start_at, presence: true
@@ -37,6 +37,31 @@ class Event < ApplicationRecord
     end
   end
 =end
+
+validate :recurring_end_greaterthan_startat
+  def recurring_end_greaterthan_startat
+    if recurring.present? && recurring_end.present? && start_at.present? && recurring_end < start_at
+      errors.add(:recurring_end, "date must be after start time")
+    end
+  end
+
+validate :unique_recurring_events
+  def unique_recurring_events()
+    events1 = self.calendar_events()
+    events2 = Event.where( "start_at >= ? AND recurring_end <= ? AND topic = ?", self.start_at, self.recurring_end, self.topic )
+    events2 = events2.flat_map{ |e| e.calendar_events()}
+    flag = false
+    events1.each do |i|
+      events2.each do |j|
+        if i.start_at == j.start_at
+          flag = true
+        end
+      end
+    end
+    if flag
+      errors.add(:recurring, ":: one or more instances of this recurring event shares a time slot with another event")
+    end
+  end
 
   def recurring=(value)
     if value != "null"

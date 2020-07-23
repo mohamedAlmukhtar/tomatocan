@@ -35,6 +35,10 @@ main {
   overflow: visible;
 }
 
+.d-none{
+  display: none;
+}
+
 //Prevents textareas from being resized out of their columns
 textarea {
   resize: vertical;
