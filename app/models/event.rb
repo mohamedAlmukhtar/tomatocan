@@ -5,7 +5,7 @@ class Event < ApplicationRecord
   has_many :rsvpqs
   has_many :users, through: :rsvpqs
   validates :start_at, uniqueness: { scope: :topic, message: ":: Can't have simultaneous Conversations/Study Halls" }
-  validates :usrid, presence: true
+  #validates :usrid, presence: true
   validates :name, presence: true
   validates :start_at, presence: true
   validates :name, format: { without: /http|\.co|\.com|\.org|\.net|\.tv|\.uk|\.ly|\.me|\.biz|\.mobi|\.cn|kickstarter|barnesandnoble|smashwords|itunes|amazon|eventbrite|rsvpify|evite|meetup/i, message: "s
@@ -40,23 +40,7 @@ validate :recurring_end_greaterthan_startat
     end
   end
 
-validate :unique_recurring_events
-  def unique_recurring_events()
-    events1 = self.calendar_events()
-    events2 = Event.where( "start_at >= ? AND recurring_end <= ? AND topic = ?", self.start_at, self.recurring_end, self.topic )
-    events2 = events2.flat_map{ |e| e.calendar_events()}
-    flag = false
-    events1.each do |i|
-      events2.each do |j|
-        if i.start_at == j.start_at
-          flag = true
-        end
-      end
-    end
-    if flag
-      errors.add(:recurring, ":: one or more instances of this recurring event shares a time slot with another event")
-    end
-  end
+
 
   def recurring=(value)
     if value != "null"
@@ -86,7 +70,8 @@ validate :unique_recurring_events
         end_date = recurring_end + 1.days
       end
       schedule(start_at).occurrences(end_date).map do |date|
-        Event.new(id: id, name: name, start_at: date, usrid: user_id, desc: desc, end_at: end_at, topic: topic)
+        puts(id)
+        Event.new(id: id, name: name, start_at: date, user_id:  user_id, usrid: user_id, desc: desc, end_at: end_at, topic: topic)
       end
     end
   end

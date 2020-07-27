@@ -62,6 +62,7 @@
             <% end %>
 
             <%= f.hidden_field :event_id, :value => @event.id %>
+            <%= f.hidden_field :event_date, :value => @event.start_at %>
 
             <% flag = true %>
 

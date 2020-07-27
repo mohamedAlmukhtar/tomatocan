@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(version: 201309200000000) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "email"
+    t.datetime "event_date"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|

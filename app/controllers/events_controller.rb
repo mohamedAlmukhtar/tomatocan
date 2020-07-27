@@ -44,21 +44,29 @@ class EventsController < ApplicationController
     convert_time # call convert time method
     @event = current_user.events.build(event_params)
     @event.recurring = params[:recurring]
-    @event.unique_recurring_events()
+    @events = @event.calendar_events()
+    flag = true
     respond_to do |format|
-      if @event.save
-        @event.update_attribute(:user_id, params[:event][:usrid])
-        user = User.find(@event.user_id)
-        offset = -1 * Time.now.in_time_zone("Pacific Time (US & Canada)").gmt_offset/3600
-        reminder_hour = @event.start_at + offset.hours - 1.hours
-        reminder_date = @event.start_at - 1.days
-        EventMailer.with(user: user , event: @event).event_reminder.deliver_later(wait_until: reminder_date)
-        EventMailer.with(user: user , event: @event).event_reminder.deliver_later(wait_until:  reminder_hour)
-        format.html { redirect_to "/" }
-        format.json { render json: @event, status: :created, location: @event }
-      else
+      @events.each do |event|
+        if event.save
+          event.update_attribute(:user_id, params[:event][:usrid])
+          user = User.find(event.user_id)
+          offset = -1 * Time.now.in_time_zone("Pacific Time (US & Canada)").gmt_offset/3600
+          reminder_hour = event.start_at + offset.hours - 1.hours
+          reminder_date = event.start_at - 1.days
+          EventMailer.with(user: user , event: event).event_reminder.deliver_later(wait_until: reminder_date)
+          EventMailer.with(user: user , event: event).event_reminder.deliver_later(wait_until:  reminder_hour)
+        else
+          flag = false
+          @event = event
+        end
+      end
+      unless flag
         format.html { render action: "new" }
         format.json { render json: @event.errors, status: :unprocessable_entity }
+      else
+        format.html { redirect_to "/" }
+        format.json { render json: @event, status: :created, location: @event }
       end
     end
   end

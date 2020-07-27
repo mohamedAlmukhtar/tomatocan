@@ -53,7 +53,7 @@ class RsvpqsController < ApplicationController
   end
 
   def rsvpq_params
-    params.require(:rsvpq).permit(:event_id, :user_id, :guests, :email)
+    params.require(:rsvpq).permit(:event_id, :user_id, :guests, :email, :event_date)
   end
 
   def resolve_layout

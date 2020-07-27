@@ -58,7 +58,7 @@ class StaticPagesController < ApplicationController
       @descriptionstudy = @displaystudy.desc
       @start_timestudy = @displaystudy.start_at.strftime("%B %d %Y") + ' ' + @displaystudy.start_at.strftime("%T") + " PDT"
       @end_timestudy = @displaystudy.end_at.strftime("%B %d %Y") + ' ' + @displaystudy.end_at.strftime("%T") + " PDT"
-      @hoststudy = User.find(@displaystudy.usrid)
+      @hoststudy = User.find(@displaystudy.user_id)
     end
     if @displayresearch.present?
       @nameresearch = @displayresearch.name
@@ -106,7 +106,7 @@ class StaticPagesController < ApplicationController
       @descriptionstudy = @displaystudy.desc
       @start_timestudy = @displaystudy.start_at.strftime("%B %d %Y") + ' ' + @displaystudy.start_at.strftime("%T") + " PDT"
       @end_timestudy = @displaystudy.end_at.strftime("%B %d %Y") + ' ' + @displaystudy.end_at.strftime("%T") + " PDT"
-      @hoststudy = User.find(@displaystudy.usrid)
+      @hoststudy = User.find(@displaystudy.user_id)
     end
     if @displayresearch.present?
       @nameresearch = @displayresearch.name
