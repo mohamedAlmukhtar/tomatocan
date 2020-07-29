@@ -11,16 +11,16 @@ class EventsController < ApplicationController
     # GET /events/1.json
   def show
     @event     = Event.find(params[:id])
-    @user      = User.find(@event.usrid)
+    @user      = User.find(@event.user_id)
     @rsvp      = Rsvpq.new
     @rsvpusers = @event.users
     @rsvps     = @event.rsvpqs
     @duration  = ((@event.end_at - @event.start_at) / 60).floor
-    @surl = "https://www.think.tv" + "/" + @user.permalink
+    @surl = "https://www.thinq.tv" + "/" + @user.permalink
 
     pdtnow = Time.now - 7.hours + 5.minutes
     id = @user.id
-    currconvo = Event.where( "start_at < ? AND end_at > ? AND usrid = ?", pdtnow, pdtnow, id ).first
+    currconvo = Event.where( "start_at < ? AND end_at > ? AND user_id = ?", pdtnow, pdtnow, id ).first
     if currconvo.present?
       @displayconvo = currconvo
     end  
@@ -121,13 +121,17 @@ class EventsController < ApplicationController
   end
   
   def update_reminder
-    user = User.find(@event.usrid)
+    user = User.find(@event.user_id)
     @reminder_date = @event.start_at - 1.hour 
     EventMailer.with(user: user , event: @event).event_reminder.deliver_later(wait_until: @reminder_date)
   end
 
   def event_params
+<<<<<<< HEAD
     params.require(:event).permit(:topic, :name, :start_at, :end_at, :desc, :usrid, :user_id, :recurring, :recurring_end)
+=======
+    params.require(:event).permit(:topic, :name, :start_at, :end_at, :desc, :user_id, :recurring)
+>>>>>>> b2e6e7f8115a891cb23c3d0b1b139ef210ab7452
   end
     
 end
